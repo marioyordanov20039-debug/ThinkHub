@@ -1,0 +1,98 @@
+name: Native packages
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  package:
+    name: ${{ matrix.baseline }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: ubuntu:22.04
+            baseline: ubuntu22.04
+            format: deb
+          - image: debian:12
+            baseline: debian12
+            format: deb
+          - image: fedora:43
+            baseline: fedora43
+            format: rpm
+          - image: archlinux:base-devel
+            baseline: arch
+            format: arch
+    container: ${{ matrix.image }}
+    env:
+      CARGO_BUILD_JOBS: 2
+      THINKHUB_CLI_PATH: /usr/bin/thinkpad-dashboard
+    steps:
+      - name: Install distro build and smoke-test dependencies
+        shell: bash
+        run: |
+          if command -v apt-get >/dev/null; then
+            apt-get update
+            DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential curl ca-certificates git python3 libgtk-4-dev pkg-config dpkg-dev desktop-file-utils xvfb xauth dbus-x11
+            # Python 3.10 has no tomllib; keep packaging on the distro interpreter.
+            apt-get install -y python3-tomli
+          elif command -v dnf >/dev/null; then
+            dnf install -y gcc curl ca-certificates git python3 gtk4-devel pkgconf-pkg-config rpm-build desktop-file-utils xorg-x11-server-Xvfb xorg-x11-xauth dbus-daemon
+          else
+            pacman -Syu --noconfirm --needed base-devel curl ca-certificates git python gtk4 pkgconf desktop-file-utils xorg-server-xvfb xorg-xauth dbus
+          fi
+      - uses: actions/checkout@v4
+      - name: Install Rust 1.85
+        shell: bash
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o /tmp/rustup-init.sh
+          sh /tmp/rustup-init.sh -y --profile minimal --default-toolchain 1.85.0
+      - name: Test and build native app and helper
+        shell: bash
+        run: |
+          . "$HOME/.cargo/env"
+          cargo test --locked
+          cargo test --manifest-path gui/Cargo.toml --locked
+          cargo build --release --locked
+          cargo build --manifest-path gui/Cargo.toml --release --locked
+      - name: Package, install and inspect
+        shell: bash
+        run: |
+          python3 scripts/package-native.py --format '${{ matrix.format }}' --baseline '${{ matrix.baseline }}'
+          if command -v apt-get >/dev/null; then
+            apt-get install -y ./dist/*.deb
+            dpkg-deb --info dist/*.deb
+          elif command -v dnf >/dev/null; then
+            dnf install -y ./dist/*.rpm
+            rpm -q --requires thinkhub
+          else
+            pacman -U --noconfirm dist/*.pkg.tar.zst
+            pacman -Qkk thinkhub
+          fi
+          desktop-file-validate /usr/share/applications/io.github.thinkhub.ThinkHub.desktop
+          /usr/bin/thinkpad-dashboard scan --json >/tmp/thinkhub-scan.json
+          /usr/lib/thinkpad-dashboard/thinkpad-dashboard-helper --version
+          python3 -c "import json; json.load(open('/tmp/thinkhub-scan.json'))"
+          test "$(stat -c '%u:%a' /usr/lib/thinkpad-dashboard/thinkpad-dashboard-helper)" = '0:755'
+          # No apply, authentication, firmware refresh or hardware writes in CI.
+      - name: Smoke-test installed GUI without hardware changes
+        shell: bash
+        run: |
+          useradd -m thinkhub-smoke
+          set +e
+          timeout 15s runuser -u thinkhub-smoke -- dbus-run-session -- xvfb-run -a /usr/bin/thinkhub >/tmp/thinkhub-gui.log 2>&1
+          result=$?
+          set -e
+          cat /tmp/thinkhub-gui.log
+          test "$result" -eq 124
+          ! grep -E 'panicked at|error while loading shared libraries|symbol lookup error|Backend version is incompatible|Live backend unavailable' /tmp/thinkhub-gui.log
+      - name: Upload native package
+        uses: actions/upload-artifact@v4
+        with:
+          name: thinkhub-${{ matrix.baseline }}-x86_64
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 14

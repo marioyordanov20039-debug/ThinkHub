@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="ThinkHub TH monogram with red TrackPoint accent">
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="#17191c" stroke="#34383f"/>
+  <path d="M22 36h42v11H49v45H37V47H22z M73 36h12v23h13V36h12v56H98V71H85v21H73z" fill="#f5f5f6"/>
+  <circle cx="91.5" cy="65" r="8" fill="#e42c40"/>
+</svg>

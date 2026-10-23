@@ -1,0 +1,30 @@
+[package]
+name = "thinkpad-dashboard"
+version = "0.5.0"
+edition = "2021"
+rust-version = "1.85"
+description = "Capability-aware Linux ThinkPad hardware backend"
+license = "MIT"
+repository = "https://github.com/marioyordanov20039-debug/ThinkHub"
+publish = false
+
+[dependencies]
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+libc = "0.2"
+
+[dev-dependencies]
+tempfile = "3"
+
+[[bin]]
+name = "thinkpad-dashboard"
+path = "src/main.rs"
+
+[[bin]]
+name = "thinkpad-dashboard-helper"
+path = "src/bin/helper.rs"
+
+[profile.release]
+lto = "thin"
+strip = true

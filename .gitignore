@@ -1,0 +1,5 @@
+/target/
+/reports/
+/gui/target/
+__pycache__/
+/dist/

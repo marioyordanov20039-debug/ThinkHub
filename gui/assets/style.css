@@ -1,0 +1,35 @@
+window { background: @bg; color: @fg; font-family: "Noto Sans", "DejaVu Sans", sans-serif; font-size: 14px; }
+.sidebar { background: @sidebar; border-right: 1px solid @border; padding: 24px 14px; }
+.brand { font-size: 21px; font-weight: 800; }
+.accent { color: @accent_text; }
+.muted { color: @muted; }
+.sidebar button { background: transparent; border: 0; box-shadow: none; padding: 12px 16px; border-radius: 9px; }
+.sidebar button:hover { background: @hover; }
+.sidebar button.selected { background: @selected; color: @accent_text; }
+.page { padding: 30px; }
+.title { font-size: 29px; font-weight: 800; }
+.subtitle { color: @muted; margin-bottom: 12px; }
+.card { background: @card; border: 1px solid @button; border-radius: 14px; padding: 20px; }
+.card-title { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.metric { font-size: 29px; font-weight: 700; }
+.row { padding: 8px 0; }
+button { background: @button; color: @fg; border: 1px solid @border; border-radius: 8px; padding: 8px 14px; box-shadow: none; }
+button:hover { background: @button_hover; }
+button.suggested-action { background: @accent; border-color: @accent; color: @accent_ink; }
+button.suggested-action:hover { background: @accent_hover; }
+button:disabled { opacity: 0.45; }
+spinbutton, dropdown, entry { background: @input; color: @fg; border-radius: 7px; }
+spinbutton button { padding: 6px 10px; }
+progressbar trough { background: @trough; min-height: 7px; border-radius: 5px; }
+progressbar progress { background: @accent; min-height: 7px; border-radius: 5px; }
+.status { background: @sidebar; border-top: 1px solid @border; padding: 10px 18px; font-size: 12px; }
+.notice { color: @notice; }
+textview, textview text { background: @input; color: @fg; }
+
+.theme-choice { min-width: 110px; padding: 18px; }
+.theme-choice:checked { background: @accent; color: @accent_ink; }
+button:focus-visible { outline-color: @accent_text; }
+checkbutton check:checked, selection { background: @accent; color: @accent_ink; }
+popover contents { background: @input; color: @fg; }
+.bios-warning { border: 2px solid #d12a3d; border-radius: 10px; padding: 16px; }
+.bios-warning-title { color: #d12a3d; font-weight: 800; font-size: 20px; }

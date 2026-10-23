@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="ThinkHub separated TH monogram with red dot">
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="#17191c" stroke="#34383f"/>
+  <path d="M22 36h38v11H47v45H35V47H22z M68 36h12v23h14V36h12v56H94V71H80v21H68z" fill="#f5f5f6"/>
+  <circle cx="100" cy="23" r="6" fill="#e42c40"/>
+</svg>
