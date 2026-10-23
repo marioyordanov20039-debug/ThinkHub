@@ -83,12 +83,32 @@ jobs:
         run: |
           useradd -m thinkhub-smoke
           set +e
-          timeout 15s runuser -u thinkhub-smoke -- dbus-run-session -- xvfb-run -a /usr/bin/thinkhub >/tmp/thinkhub-gui.log 2>&1
+          timeout 20s runuser -u thinkhub-smoke -- env THINKPAD_DASHBOARD_CAPTURE_DIR=/tmp/thinkhub-smoke-captures dbus-run-session -- xvfb-run -a /usr/bin/thinkhub >/tmp/thinkhub-gui.log 2>&1
           result=$?
           set -e
           cat /tmp/thinkhub-gui.log
           test "$result" -eq 124
+          test "$(find /tmp/thinkhub-smoke-captures -name 'page-*.png' | wc -l)" -eq 7
+          grep -q 'Read-only visual smoke check completed: 7 pages' /tmp/thinkhub-gui.log
           ! grep -E 'panicked at|error while loading shared libraries|symbol lookup error|Backend version is incompatible|Live backend unavailable' /tmp/thinkhub-gui.log
+      - name: Reinstall and remove through the package manager
+        shell: bash
+        run: |
+          if command -v apt-get >/dev/null; then
+            apt-get install --reinstall -y ./dist/*.deb
+            apt-get remove -y thinkhub
+          elif command -v dnf >/dev/null; then
+            dnf reinstall -y ./dist/*.rpm
+            dnf remove -y thinkhub
+          else
+            pacman -U --noconfirm dist/*.pkg.tar.zst
+            pacman -R --noconfirm thinkhub
+          fi
+          test ! -e /usr/bin/thinkhub
+          test ! -e /usr/bin/thinkpad-dashboard
+          test ! -e /usr/lib/thinkpad-dashboard/thinkpad-dashboard-helper
+          test ! -e /usr/share/polkit-1/actions/io.github.thinkpaddashboard.control.policy
+          test ! -e /usr/share/applications/io.github.thinkhub.ThinkHub.desktop
       - name: Upload native package
         uses: actions/upload-artifact@v4
         with:

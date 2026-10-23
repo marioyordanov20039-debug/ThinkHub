@@ -67,13 +67,14 @@ version discovery/validation. No input events are read by these tests or the app
 
 | Target | Current evidence | Required before claiming release support |
 | --- | --- | --- |
-| Arch / CachyOS | Local build, tests and live read-only T480 run passed | Native package installation, control validation, more models |
-| Ubuntu 22.04 / 24.04 | CI workflow configured, not executed | CI results, native package and physical runtime checks |
-| Debian 12 | Container fixture/build job configured, not executed | CI results, native package and physical runtime checks |
-| Fedora | Container fixture/build job configured, not executed | CI results, native package and physical runtime checks |
+| Arch / CachyOS | Local build, tests and live read-only T480 run passed | Native package CI plus control validation on more physical models |
+| Ubuntu 22.04 / 24.04 | Native build/install/reinstall/remove and seven-page GUI smoke CI; see release workflow | Additional physical runtime/security-policy checks |
+| Debian 12 | Native build/install/reinstall/remove and seven-page GUI smoke CI; see release workflow | Additional physical runtime/security-policy checks |
+| Fedora | Native build/install/reinstall/remove and seven-page GUI smoke CI; see release workflow | Additional physical runtime/security-policy checks |
 | Other Intel / AMD ThinkPads | Synthetic interface cases only | Physical hardware and firmware-specific feature reports |
 | ARM ThinkPads | No testing yet | Build/driver availability and physical hardware testing |
 | Legacy IBM ThinkPads | Generic charge-based fixture coverage only | Model identity, older driver interfaces and physical testing |
 
-Container CI validates compilation and synthetic tests, not host hardware support, system bus
-services, polkit, suspend/resume or installation. The public preview provides distro-specific native packages; see [INSTALL.md](INSTALL.md).
+Container CI validates compilation, synthetic tests, native package install/reinstall/removal and
+seven-page GUI rendering. It does not validate host hardware, real desktop polkit prompts,
+suspend/resume or physical BIOS updates. The public preview provides distro-specific native packages; see [INSTALL.md](INSTALL.md).

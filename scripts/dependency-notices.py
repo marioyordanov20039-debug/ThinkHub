@@ -30,5 +30,5 @@ for (name,version),package in sorted(packages.items()):
     output+=['='*72,f'{name} {version}',f'Declared license: {package.get("license")}',
              f'Source: https://crates.io/crates/{name}/{version}','']
     for path in files:output += [f'--- {path.name} ---',path.read_text(errors='replace').strip(),'']
-(ROOT/'THIRD_PARTY_NOTICES.txt').write_text('\n'.join(output)+'\n')
+(ROOT/'THIRD_PARTY_NOTICES.txt').write_text('\n'.join(output).rstrip()+'\n')
 print(f'Collected notices for {len(packages)} Linux dependency versions.')

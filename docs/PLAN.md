@@ -45,10 +45,10 @@ services for firmware updates and desktop-owned settings.
 4. **Interface design and implementation — in progress:** first native ThinkHub prototype
    implemented after backend validation. Refine the layout with actual use. The GUI reuses
    backend validation and calls the installed CLI; the ordinary app stays unprivileged.
-5. **Packaging and release validation:** `.deb`, `.rpm`, Arch packaging; install/upgrade/remove
-   tests; Ubuntu/Debian/Fedora/Arch runtime checks; X11/Wayland and desktop testing.
-6. **Public release:** app name chosen as ThinkHub; choose a license, review source and docs, create GitHub repo,
-   publish verified release artifacts/checksums and tested model/distro information.
+5. **Preview packaging:** `.deb`, `.rpm`, Arch packaging and container install/reinstall/remove
+   and GUI checks. Broader upgrade, X11/Wayland and physical desktop testing remain.
+6. **First public preview:** ThinkHub, MIT license, documented limits, screenshots, native
+   release packages and checksums. This is a starting point for wider model reports, not universal support.
 
 ## Release acceptance
 
