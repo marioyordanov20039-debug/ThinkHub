@@ -107,6 +107,9 @@ mkdir -p "%{{buildroot}}"
 cp -a "{root}/." "%{{buildroot}}/"
 %files
 %defattr(-,root,root,-)
+%dir /usr/lib/thinkpad-dashboard
+%dir /usr/share/doc/thinkhub
+%dir /usr/share/licenses/thinkhub
 {filelist}
 ''')
     subprocess.run(['rpmbuild','--define',f'_topdir {top}', '--define','_build_id_links none',
