@@ -87,7 +87,7 @@ jobs:
         run: |
           useradd -m thinkhub-smoke
           set +e
-          timeout 20s runuser -u thinkhub-smoke -- env THINKPAD_DASHBOARD_CAPTURE_DIR=/tmp/thinkhub-smoke-captures dbus-run-session -- xvfb-run -a /usr/bin/thinkhub >/tmp/thinkhub-gui.log 2>&1
+          timeout 20s runuser -u thinkhub-smoke -- env THINKPAD_DASHBOARD_CAPTURE_DIR=/tmp/thinkhub-smoke-captures xvfb-run -a dbus-run-session -- /usr/bin/thinkhub >/tmp/thinkhub-gui.log 2>&1
           result=$?
           set -e
           cat /tmp/thinkhub-gui.log

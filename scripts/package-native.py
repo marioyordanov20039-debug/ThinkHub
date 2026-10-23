@@ -96,7 +96,9 @@ Summary: Native Rust ThinkPad dashboard for Linux
 License: MIT
 URL: {URL}
 Requires: polkit
+Requires: libglvnd-gles
 Recommends: fwupd
+Recommends: mesa-dri-drivers
 %description
 Hardware monitoring, capability-aware controls and appearance customization.
 First preview; controls depend on the kernel, firmware and model.
