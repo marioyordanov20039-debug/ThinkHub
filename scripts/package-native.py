@@ -38,6 +38,7 @@ def stage(root):
     copy(ROOT / 'data/io.github.thinkpaddashboard.control.policy', root,
          '/usr/share/polkit-1/actions/io.github.thinkpaddashboard.control.policy')
     copy(ROOT / 'LICENSE', root, '/usr/share/licenses/thinkhub/LICENSE')
+    copy(ROOT / 'THIRD_PARTY_NOTICES.txt', root, '/usr/share/licenses/thinkhub/THIRD_PARTY_NOTICES.txt')
     for name in ('README.md', 'docs/INSTALL.md', 'docs/BIOS_UPDATES.md', 'docs/COMPATIBILITY.md'):
         copy(ROOT / name, root, '/usr/share/doc/thinkhub/' + Path(name).name)
     for icon in (ROOT / 'gui/assets/icons').glob('*/*.png'):

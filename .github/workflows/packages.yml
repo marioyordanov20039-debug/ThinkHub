@@ -40,7 +40,7 @@ jobs:
             # Python 3.10 has no tomllib; keep packaging on the distro interpreter.
             apt-get install -y python3-tomli
           elif command -v dnf >/dev/null; then
-            dnf install -y gcc curl ca-certificates git python3 gtk4-devel pkgconf-pkg-config rpm-build desktop-file-utils xorg-x11-server-Xvfb xorg-x11-xauth dbus-daemon
+            dnf install -y gcc curl ca-certificates git python3 gtk4-devel pkgconf-pkg-config rpm-build desktop-file-utils xorg-x11-server-Xvfb xorg-x11-xauth dbus-daemon shadow-utils
           else
             pacman -Syu --noconfirm --needed base-devel curl ca-certificates git python gtk4 pkgconf desktop-file-utils xorg-server-xvfb xorg-xauth dbus
           fi

@@ -13,8 +13,8 @@ Choose the Ubuntu package when the derivative is based on Ubuntu 22.04 or newer.
 ```sh
 curl -fLO https://github.com/marioyordanov20039-debug/ThinkHub/releases/download/v0.5.0-preview.1/thinkhub_0.5.0-1_ubuntu22.04_amd64.deb
 curl -fLO https://github.com/marioyordanov20039-debug/ThinkHub/releases/download/v0.5.0-preview.1/SHA256SUMS
-sha256sum --ignore-missing -c SHA256SUMS
-sudo apt update
+sha256sum --ignore-missing -c SHA256SUMS &&
+sudo apt update &&
 sudo apt install ./thinkhub_0.5.0-1_ubuntu22.04_amd64.deb
 ```
 
@@ -25,8 +25,8 @@ Use this package on Debian 12 (Bookworm), Debian 13 (Trixie) or a compatible der
 ```sh
 curl -fLO https://github.com/marioyordanov20039-debug/ThinkHub/releases/download/v0.5.0-preview.1/thinkhub_0.5.0-1_debian12_amd64.deb
 curl -fLO https://github.com/marioyordanov20039-debug/ThinkHub/releases/download/v0.5.0-preview.1/SHA256SUMS
-sha256sum --ignore-missing -c SHA256SUMS
-sudo apt update
+sha256sum --ignore-missing -c SHA256SUMS &&
+sudo apt update &&
 sudo apt install ./thinkhub_0.5.0-1_debian12_amd64.deb
 ```
 
@@ -37,7 +37,7 @@ This RPM is built on Fedora 43. It is not an openSUSE, RHEL or universal RPM pac
 ```sh
 curl -fLO https://github.com/marioyordanov20039-debug/ThinkHub/releases/download/v0.5.0-preview.1/thinkhub-0.5.0-1.fedora43.x86_64.rpm
 curl -fLO https://github.com/marioyordanov20039-debug/ThinkHub/releases/download/v0.5.0-preview.1/SHA256SUMS
-sha256sum --ignore-missing -c SHA256SUMS
+sha256sum --ignore-missing -c SHA256SUMS &&
 sudo dnf install ./thinkhub-0.5.0-1.fedora43.x86_64.rpm
 ```
 
@@ -49,7 +49,7 @@ Fully update your system before installing a rolling-release build. Manjaro and 
 sudo pacman -Syu
 curl -fLO https://github.com/marioyordanov20039-debug/ThinkHub/releases/download/v0.5.0-preview.1/thinkhub-0.5.0-1-x86_64.pkg.tar.zst
 curl -fLO https://github.com/marioyordanov20039-debug/ThinkHub/releases/download/v0.5.0-preview.1/SHA256SUMS
-sha256sum --ignore-missing -c SHA256SUMS
+sha256sum --ignore-missing -c SHA256SUMS &&
 sudo pacman -U ./thinkhub-0.5.0-1-x86_64.pkg.tar.zst
 ```
 
