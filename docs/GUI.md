@@ -22,7 +22,7 @@ and the system's polkit prompt. No AppImage or background daemon is installed.
 
 Development dependencies: a Rust compiler, C linker, pkg-config and GTK4 development files.
 Typical package names are `build-essential pkg-config libgtk-4-dev` on Debian/Ubuntu,
-`gcc pkgconf-pkg-config gtk4-devel` on Fedora and `base-devel pkgconf gtk4` on Arch.
+`gcc pkgconf-pkg-config gtk4-devel libglvnd-gles mesa-dri-drivers` on Fedora and `base-devel pkgconf gtk4` on Arch.
 These are instructions for future testing, not evidence of validation on those systems.
 Native preview packages and source installation are documented in [INSTALL.md](INSTALL.md).
 

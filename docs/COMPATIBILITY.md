@@ -78,3 +78,11 @@ version discovery/validation. No input events are read by these tests or the app
 Container CI validates compilation, synthetic tests, native package install/reinstall/removal and
 seven-page GUI rendering. It does not validate host hardware, real desktop polkit prompts,
 suspend/resume or physical BIOS updates. The public preview provides distro-specific native packages; see [INSTALL.md](INSTALL.md).
+
+## Published preview verification
+
+`v0.5.0-preview.1` was built from `13c897849880d433f11e710919b669229fc86c95`.
+The [native package workflow](https://github.com/marioyordanov20039-debug/ThinkHub/actions/runs/40041149222)
+passed all four distro jobs, including install, seven-page GUI rendering, reinstall and removal.
+The [Rust/GUI workflow](https://github.com/marioyordanov20039-debug/ThinkHub/actions/runs/40041149212)
+also passed. These container results do not expand the physical model validation above.

@@ -118,7 +118,7 @@ sudo apt update
 sudo apt install build-essential git curl ca-certificates pkg-config libgtk-4-dev python3
 
 # Fedora
-sudo dnf install gcc git curl ca-certificates pkgconf-pkg-config gtk4-devel python3
+sudo dnf install gcc git curl ca-certificates pkgconf-pkg-config gtk4-devel python3 libglvnd-gles mesa-dri-drivers
 
 # Arch / CachyOS
 sudo pacman -Syu --needed base-devel git curl ca-certificates pkgconf gtk4 python
