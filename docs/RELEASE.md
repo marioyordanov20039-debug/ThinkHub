@@ -1,11 +1,11 @@
-# ThinkHub 0.5 public preview
+# ThinkHub 0.5.1 feedback preview
 
-Release tag: `v0.5.0-preview.1`. App, backend and helper version: `0.5.0`.
-Native package version: `0.5.0-1`. These are preview builds, not a guarantee of universal ThinkPad support.
+Release tag: `v0.5.1-preview.1`. App, backend and helper version: `0.5.1`.
+Native package version: `0.5.1-1`. These are preview builds, not a guarantee of universal ThinkPad support.
 
 ## Release gates
 
-- Core and GUI tests, formatting and warning-free Clippy on Rust 1.85.
+- 75 core and nine GUI tests, formatting and warning-free Clippy on Rust 1.85.
 - Native builds in Ubuntu 22.04, Debian 12, Fedora 43 and rolling Arch containers.
 - Each package installs with its distro package manager, its desktop entry validates and its
   helper is root-owned, mode 0755, without setuid/setgid permissions.
@@ -40,3 +40,7 @@ They install icons and the launcher under `/usr/share`. No ThinkHub service is i
 Packages are unsigned in this first preview. A release checksum manifest detects mismatched
 files but is not an independently authenticated signature. Reproducible byte-for-byte builds,
 artifact attestations, ARM builds and broader physical validation remain future work.
+
+Version 0.5.1 adds Feedback with reviewed mailto drafts, optional allowlisted system details,
+validation and a copy fallback. Receipt of the generated test message was confirmed before
+publication. Test-only mailto handlers capture drafts in CI; CI never sends real feedback mail.

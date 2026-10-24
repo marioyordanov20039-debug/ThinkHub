@@ -1,6 +1,6 @@
 [package]
 name = "thinkpad-dashboard"
-version = "0.5.0"
+version = "0.5.1"
 edition = "2021"
 rust-version = "1.85"
 description = "Capability-aware Linux ThinkPad hardware backend"

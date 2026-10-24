@@ -92,9 +92,45 @@ jobs:
           set -e
           cat /tmp/thinkhub-gui.log
           test "$result" -eq 124
-          test "$(find /tmp/thinkhub-smoke-captures -name 'page-*.png' | wc -l)" -eq 7
-          grep -q 'Read-only visual smoke check completed: 7 pages' /tmp/thinkhub-gui.log
+          test "$(find /tmp/thinkhub-smoke-captures -name 'page-*.png' | wc -l)" -eq 8
+          grep -q 'Read-only visual smoke check completed: 8 pages' /tmp/thinkhub-gui.log
           ! grep -E 'panicked at|error while loading shared libraries|symbol lookup error|Backend version is incompatible|Live backend unavailable' /tmp/thinkhub-gui.log
+      - name: Verify Feedback form and exact email handoff without sending mail
+        shell: bash
+        run: |
+          testroot=/tmp/thinkhub-feedback-smoke
+          mkdir -p "$testroot/config" "$testroot/data/applications"
+          cat > "$testroot/record.py" <<'PY'
+          from pathlib import Path
+          import sys
+          Path('/tmp/thinkhub-feedback-smoke/received-mailto.txt').write_text(sys.argv[1])
+          PY
+          cat > "$testroot/data/applications/thinkhub-test-mail.desktop" <<'DESKTOP'
+          [Desktop Entry]
+          Type=Application
+          Name=ThinkHub test mail recorder
+          Exec=/usr/bin/python3 /tmp/thinkhub-feedback-smoke/record.py %u
+          MimeType=x-scheme-handler/mailto;
+          NoDisplay=true
+          DESKTOP
+          printf '[Default Applications]\nx-scheme-handler/mailto=thinkhub-test-mail.desktop\n' > "$testroot/config/mimeapps.list"
+          update-desktop-database "$testroot/data/applications"
+          chown -R "$(id -u thinkhub-smoke):$(id -g thinkhub-smoke)" "$testroot"
+          set +e
+          timeout 15s runuser -u thinkhub-smoke -- env XDG_CONFIG_HOME="$testroot/config" XDG_DATA_HOME="$testroot/data" THINKHUB_FEEDBACK_TEST_DIR="$testroot" THINKHUB_FEEDBACK_TEST_OPEN_MAIL=1 xvfb-run -a dbus-run-session -- /usr/bin/thinkhub >"$testroot/test.log" 2>&1
+          result=$?
+          set -e
+          cat "$testroot/test.log"
+          test "$result" -eq 124
+          grep -q 'Feedback form/review check passed' "$testroot/test.log"
+          cmp "$testroot/test-mailto.txt" "$testroot/received-mailto.txt"
+          python3 - <<'PY'
+          from pathlib import Path
+          from urllib.parse import urlsplit, parse_qs
+          uri = urlsplit(Path('/tmp/thinkhub-feedback-smoke/received-mailto.txt').read_text())
+          assert uri.scheme == 'mailto' and uri.path == 'info.thinkhub@protonmail.com'
+          assert set(parse_qs(uri.query)) == {'subject', 'body'}
+          PY
       - name: Reinstall and remove through the package manager
         shell: bash
         run: |

@@ -15,7 +15,7 @@ Launch **ThinkHub** from the app menu, or run `~/.local/bin/thinkhub`.
 The default app icon is the separated white TH monogram, graphite tile and red dot above the H.
 The installer includes its scalable SVG and 16–512px PNG fallbacks and refreshes the desktop/icon
 caches where the tools are available. Future distro packages must include the same app-ID assets.
-Install the matching 0.5.0 backend using `scripts/install-local.sh` first. Developer builds call the
+Install the matching 0.5.1 backend using `scripts/install-local.sh` first. Developer builds call the
 fixed `/usr/local/bin/thinkpad-dashboard` path; native packages use a build-time `/usr/bin/thinkpad-dashboard` path and checks its status schema and version.
 It never runs itself as root. Hardware writes still use the installed root-owned helper
 and the system's polkit prompt. No AppImage or background daemon is installed.
@@ -27,7 +27,7 @@ These are instructions for future testing, not evidence of validation on those s
 Native preview packages and source installation are documented in [INSTALL.md](INSTALL.md).
 
 The initial layout has Overview, Batteries, Power & thermals, Display & input, Firmware,
-Preferences & diagnostics, and Customize pages. Live snapshots are read on a worker thread every five
+Preferences & diagnostics, Customize, and Feedback pages. Live snapshots are read on a worker thread every five
 seconds. GTK stays on the main thread. Editors retain drafts between refreshes, unless
 hardware identity or control ownership changes. Failed reads mark displayed data as stale
 and prevent actions until a successful refresh. Device changes recreate affected editors.
@@ -47,7 +47,7 @@ does not alter the desktop theme. Accent text and button foregrounds adapt for c
 Malformed or unsupported settings fall back to defaults with an explanation in Customize;
 save failures leave a live preview and an explicit error. Customize works even without the backend.
 
-Read-only visual smoke check (navigate all seven native pages and export their rendered window):
+Read-only visual smoke check (navigate all eight native pages and export their rendered window):
 
 ```sh
 THINKPAD_DASHBOARD_CAPTURE_DIR=/absolute/output/directory gui/target/release/thinkhub
@@ -77,3 +77,6 @@ backend's previously documented limits still apply: no manual fan curves, BIOS e
 raw firmware flashing or automatic startup application. Supported BIOS preparation now uses
 the [fwupd workflow](BIOS_UPDATES.md), with warning, acknowledgement and system authorization;
 physical flashing/reboot has not been tested. This preview is released with those limits documented.
+
+The [Feedback tab](FEEDBACK.md) opens reviewed email drafts addressed to info.thinkhub@protonmail.com.
+It also works without the hardware backend. Sending remains an explicit action in the user’s email app.

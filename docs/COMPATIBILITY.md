@@ -29,7 +29,7 @@ tested physical model or installed distro.
 | PS/2 controls | Sensitivity 200 and speed 97 discovered; request preview passed; live sensitivity test 200 → 201 → 200 passed; speed unchanged at 97 |
 | Helper compatibility | Older helper rejected before authorization; installed helper 0.5 matches app 0.5; query requires no authorization |
 | Status monitoring | Two complete JSON samples captured successfully |
-| ThinkHub native GUI | Rust 1.85 GTK4 build, six GUI tests and Clippy passed; seven pages including Customize; local Hyprland/T480 validation |
+| ThinkHub native GUI | Rust 1.85 GTK4 build, nine GUI tests and Clippy passed; eight pages including Feedback; local Hyprland/T480 validation |
 | Firmware fan auto | Interface detected; no-op preview succeeded because firmware auto was already set |
 | CPU policies / radio state | Read-only discovery succeeded |
 | CPU / RAM / graphics / drives / OS | Expanded inventory read successfully |
@@ -43,7 +43,7 @@ Raw local reports are generated under `reports/` and excluded from Git. They are
 
 ## Simulated hardware tests
 
-75 core tests and six GUI tests passed across library and integration tests. Cases include dual energy-based batteries,
+75 core tests and nine GUI tests passed across library and integration tests. Cases include dual energy-based batteries,
 older charge-based batteries, zero design capacity, absent batteries with stale attributes,
 malformed readings, variable hwmon indices, invalid temperature sentinels, modern platform
 profiles, AMD CPU policy information without a firmware profile, threshold update ordering,
@@ -68,15 +68,15 @@ version discovery/validation. No input events are read by these tests or the app
 | Target | Current evidence | Required before claiming release support |
 | --- | --- | --- |
 | Arch / CachyOS | Local build, tests and live read-only T480 run passed | Native package CI plus control validation on more physical models |
-| Ubuntu 22.04 / 24.04 | Native build/install/reinstall/remove and seven-page GUI smoke CI; see release workflow | Additional physical runtime/security-policy checks |
-| Debian 12 | Native build/install/reinstall/remove and seven-page GUI smoke CI; see release workflow | Additional physical runtime/security-policy checks |
-| Fedora | Native build/install/reinstall/remove and seven-page GUI smoke CI; see release workflow | Additional physical runtime/security-policy checks |
+| Ubuntu 22.04 / 24.04 | Native build/install/reinstall/remove and eight-page GUI smoke CI; see release workflow | Additional physical runtime/security-policy checks |
+| Debian 12 | Native build/install/reinstall/remove and eight-page GUI smoke CI; see release workflow | Additional physical runtime/security-policy checks |
+| Fedora | Native build/install/reinstall/remove and eight-page GUI smoke CI; see release workflow | Additional physical runtime/security-policy checks |
 | Other Intel / AMD ThinkPads | Synthetic interface cases only | Physical hardware and firmware-specific feature reports |
 | ARM ThinkPads | No testing yet | Build/driver availability and physical hardware testing |
 | Legacy IBM ThinkPads | Generic charge-based fixture coverage only | Model identity, older driver interfaces and physical testing |
 
 Container CI validates compilation, synthetic tests, native package install/reinstall/removal and
-seven-page GUI rendering. It does not validate host hardware, real desktop polkit prompts,
+eight-page GUI rendering. It does not validate host hardware, real desktop polkit prompts,
 suspend/resume or physical BIOS updates. The public preview provides distro-specific native packages; see [INSTALL.md](INSTALL.md).
 
 ## Published preview verification
@@ -86,3 +86,11 @@ The [native package workflow](https://github.com/marioyordanov20039-debug/ThinkH
 passed all four distro jobs, including install, seven-page GUI rendering, reinstall and removal.
 The [Rust/GUI workflow](https://github.com/marioyordanov20039-debug/ThinkHub/actions/runs/40041149212)
 also passed. These container results do not expand the physical model validation above.
+
+## Feedback update (0.5.1 preview)
+
+Local native form/review checks verified draft retention across navigation and the exact
+recipient, subject and body handed to an isolated mailto handler. The generated message was
+also opened in Gmail and sent to info.thinkhub@protonmail.com; the maintainer confirmed receipt
+on 2026-10-24. This validates that test path, not every possible mail client. Feedback has no
+SMTP credentials or direct-send service, and always leaves final sending to the email app.

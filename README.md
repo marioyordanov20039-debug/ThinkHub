@@ -10,18 +10,18 @@ ThinkHub brings battery health, temperatures, fan speed, hardware information an
 
 ![ThinkHub Overview running on a ThinkPad T480 with CachyOS](docs/images/overview.png)
 
-**First public preview — v0.5.0-preview.1.** Tested locally on a ThinkPad T480 running CachyOS. Support depends on the model, Linux kernel, firmware and installed services. This release does **not** promise that every feature works on every ThinkPad. See the [compatibility record](docs/COMPATIBILITY.md).
+**Public preview — v0.5.1-preview.1.** Tested locally on a ThinkPad T480 running CachyOS. Support depends on the model, Linux kernel, firmware and installed services. This release does **not** promise that every feature works on every ThinkPad. See the [compatibility record](docs/COMPATIBILITY.md).
 
 ## Download and install
 
-Get a native package from **[Releases](https://github.com/marioyordanov20039-debug/ThinkHub/releases/tag/v0.5.0-preview.1)**. There are no AppImages, bundled web browsers or ThinkHub background services.
+Get a native package from **[Releases](https://github.com/marioyordanov20039-debug/ThinkHub/releases/tag/v0.5.1-preview.1)**. There are no AppImages, bundled web browsers or ThinkHub background services.
 
 | Your distro | Download | Install from the download directory |
 | --- | --- | --- |
-| Ubuntu 22.04+; compatible Ubuntu-based systems | `thinkhub_0.5.0-1_ubuntu22.04_amd64.deb` | `sudo apt install ./thinkhub_0.5.0-1_ubuntu22.04_amd64.deb` |
-| Debian 12+; compatible Debian-based systems | `thinkhub_0.5.0-1_debian12_amd64.deb` | `sudo apt install ./thinkhub_0.5.0-1_debian12_amd64.deb` |
-| Fedora 43+; compatible Fedora-based systems | `thinkhub-0.5.0-1.fedora43.x86_64.rpm` | `sudo dnf install ./thinkhub-0.5.0-1.fedora43.x86_64.rpm` |
-| Up-to-date Arch Linux, CachyOS, EndeavourOS | `thinkhub-0.5.0-1-x86_64.pkg.tar.zst` | `sudo pacman -U ./thinkhub-0.5.0-1-x86_64.pkg.tar.zst` |
+| Ubuntu 22.04+; compatible Ubuntu-based systems | `thinkhub_0.5.1-1_ubuntu22.04_amd64.deb` | `sudo apt install ./thinkhub_0.5.1-1_ubuntu22.04_amd64.deb` |
+| Debian 12+; compatible Debian-based systems | `thinkhub_0.5.1-1_debian12_amd64.deb` | `sudo apt install ./thinkhub_0.5.1-1_debian12_amd64.deb` |
+| Fedora 43+; compatible Fedora-based systems | `thinkhub-0.5.1-1.fedora43.x86_64.rpm` | `sudo dnf install ./thinkhub-0.5.1-1.fedora43.x86_64.rpm` |
+| Up-to-date Arch Linux, CachyOS, EndeavourOS | `thinkhub-0.5.1-1-x86_64.pkg.tar.zst` | `sudo pacman -U ./thinkhub-0.5.1-1-x86_64.pkg.tar.zst` |
 
 These packages are for **64-bit Intel/AMD (`x86_64` / `amd64`)**. Fedora derivatives and Arch derivatives with delayed repositories may need a source build. A package's build baseline is not evidence of physical hardware testing on every derivative. ARM/32-bit binaries and official distro repositories are not available in this preview.
 
@@ -37,9 +37,12 @@ Open **ThinkHub** from your app launcher after installation, or run `thinkhub` a
 - **Display & input:** backlight and keyboard-light controls, connector/input information and verified PS/2 TrackPoint parameters. Hyprland can also supply current output details.
 - **Firmware:** allowlisted BIOS information, fwupd inventory and an experimental, guarded BIOS update preparation workflow for supported LVFS releases.
 - **Preferences & diagnostics:** save preferences, inspect blockers and review change previews. Saving a preference never silently changes hardware.
+- **Feedback:** review a message to `info.thinkhub@protonmail.com` and open it in your email app, with optional system details and a copy fallback. See [the feedback workflow](docs/FEEDBACK.md).
 - **Customize:** light/dark themes, eight accent presets and a custom color picker, remembered across launches.
 
 ![ThinkHub Customize page](docs/images/customize.png)
+
+![ThinkHub Feedback tab](docs/images/feedback.png)
 
 No telemetry, account or cloud service is required. Normal monitoring reads local data. Firmware catalog refresh/download and explicitly requested system integrations use the relevant system services. Missing readings stay unavailable instead of being guessed.
 

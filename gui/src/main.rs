@@ -1,5 +1,6 @@
 //! Unprivileged native frontend. All mutations go through the installed CLI.
 mod appearance;
+mod feedback;
 use gtk::{glib, prelude::*};
 use serde_json::{json, Value};
 use std::{
@@ -18,7 +19,7 @@ const CLI: &str = match option_env!("THINKHUB_CLI_PATH") {
     Some(path) => path,
     None => "/usr/local/bin/thinkpad-dashboard",
 };
-const PAGES: [&str; 7] = [
+const PAGES: [&str; 8] = [
     "Overview",
     "Batteries",
     "Power & thermals",
@@ -26,6 +27,7 @@ const PAGES: [&str; 7] = [
     "Firmware",
     "Preferences & diagnostics",
     "Customize",
+    "Feedback",
 ];
 type Binding = (gtk::Label, Box<dyn Fn(&Value) -> String>);
 
@@ -41,6 +43,7 @@ struct Ui {
     css: gtk::CssProvider,
     appearance: RefCell<appearance::Appearance>,
     appearance_error: RefCell<Option<String>>,
+    feedback: Rc<RefCell<feedback::Draft>>,
     window: gtk::ApplicationWindow,
     content: gtk::Box,
     status: gtk::Label,
@@ -126,7 +129,10 @@ fn build(app: &gtk::Application) {
     let spring = gtk::Box::new(gtk::Orientation::Vertical, 0);
     spring.set_vexpand(true);
     sidebar.append(&spring);
-    sidebar.append(&label("Native Linux prototype · 0.5", "muted"));
+    sidebar.append(&label(
+        &format!("Linux preview · {}", env!("CARGO_PKG_VERSION")),
+        "muted",
+    ));
     let refresh = gtk::Button::with_label("Refresh live data");
     sidebar.append(&refresh);
     let content = gtk::Box::new(gtk::Orientation::Vertical, 18);
@@ -156,6 +162,7 @@ fn build(app: &gtk::Application) {
         css,
         appearance: RefCell::new(appearance),
         appearance_error: RefCell::new(appearance_error),
+        feedback: Rc::new(RefCell::new(feedback::Draft::default())),
         window,
         content,
         status,
@@ -195,6 +202,12 @@ fn build(app: &gtk::Application) {
     ui.render();
     ui.window.present();
     ui.refresh();
+    if let Some(directory) = std::env::var_os("THINKHUB_FEEDBACK_TEST_DIR") {
+        let ui = ui.clone();
+        glib::timeout_add_local_once(Duration::from_millis(600), move || {
+            feedback_smoke(ui, std::path::PathBuf::from(directory));
+        });
+    }
     if std::env::var_os("THINKHUB_CAPTURE_BIOS_REVIEW").is_some() {
         let weak = Rc::downgrade(&ui);
         let mut attempts = 0;
@@ -267,6 +280,7 @@ fn build(app: &gtk::Application) {
                 }
             }
             if step == PAGES.len() && test_appearance {
+                ui.nav[6].emit_clicked();
                 // Opt-in appearance integration check: use an isolated XDG_CONFIG_HOME.
                 // Exercise the same GTK signals users trigger, then capture the live update.
                 for widget in descendants(ui.content.upcast_ref()) {
@@ -341,6 +355,81 @@ fn descendants(widget: &gtk::Widget) -> Vec<gtk::Widget> {
         result.push(widget);
     }
     result
+}
+
+// Explicit developer-only check of the real form/review signals. Never presses Send
+// in another application. Opening an email draft requires a separate opt-in flag.
+fn feedback_smoke(ui: Rc<Ui>, directory: std::path::PathBuf) {
+    ui.window.maximize();
+    std::fs::create_dir_all(&directory).expect("Create feedback test directory");
+    let id = format!(
+        "THINKHUB-{}",
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs()
+    );
+    let subject = format!("Feedback delivery test {id}");
+    let message = format!("This is a test of ThinkHub's new Feedback option.\nTest ID: {id}\nPlease confirm this message arrived. No hardware details or logs are attached.");
+    ui.nav[7].emit_clicked();
+    for widget in descendants(ui.content.upcast_ref()) {
+        if let Some(entry) = widget.downcast_ref::<gtk::Entry>() {
+            entry.set_text(&subject);
+        }
+        if let Some(view) = widget.downcast_ref::<gtk::TextView>() {
+            view.buffer().set_text(&message);
+        }
+    }
+    assert_eq!(ui.feedback.borrow().subject, subject);
+    assert_eq!(ui.feedback.borrow().message, message);
+    ui.nav[6].emit_clicked();
+    ui.nav[7].emit_clicked();
+    assert!(descendants(ui.content.upcast_ref()).iter().any(|w| w
+        .downcast_ref::<gtk::Entry>()
+        .is_some_and(|e| e.text() == subject)));
+    let prepared = feedback::prepare(&ui.feedback.borrow(), &ui.data.borrow()).unwrap();
+    std::fs::write(directory.join("test-email.txt"), prepared.copy_text()).unwrap();
+    std::fs::write(directory.join("test-mailto.txt"), &prepared.uri).unwrap();
+    for widget in descendants(ui.content.upcast_ref()) {
+        if let Some(button) = widget.downcast_ref::<gtk::Button>() {
+            if button.label().as_deref() == Some("Review feedback") {
+                button.emit_clicked();
+            }
+        }
+    }
+    glib::timeout_add_local_once(Duration::from_millis(600), move || {
+        let review = gtk::Window::list_toplevels()
+            .into_iter()
+            .filter_map(|w| w.downcast::<gtk::Window>().ok())
+            .find(|w| w.title().as_deref() == Some("Review feedback"))
+            .expect("Review window opened");
+        for (name, window) in [
+            ("feedback-form.png", ui.window.upcast_ref::<gtk::Window>()),
+            ("feedback-review.png", &review),
+        ] {
+            let paintable = gtk::WidgetPaintable::new(Some(window));
+            let snapshot = gtk::Snapshot::new();
+            paintable.snapshot(&snapshot, window.width() as f64, window.height() as f64);
+            let node = snapshot.to_node().expect("Feedback window painted");
+            window
+                .renderer()
+                .expect("Feedback renderer")
+                .render_texture(&node, None)
+                .save_to_png(directory.join(name))
+                .expect("Save feedback capture");
+        }
+        eprintln!("Feedback form/review check passed: draft survives navigation; recipient and message preserved; no email sent. Test ID: {id}");
+        if std::env::var_os("THINKHUB_FEEDBACK_TEST_OPEN_MAIL").is_some() {
+            for widget in descendants(review.upcast_ref()) {
+                if let Some(button) = widget.downcast_ref::<gtk::Button>() {
+                    if button.label().as_deref() == Some("Open email app") {
+                        button.emit_clicked();
+                    }
+                }
+            }
+            eprintln!("Requested email draft handoff only; delivery still requires Send in the email app.");
+        }
+    });
 }
 fn text(v: &Value) -> String {
     match v {
@@ -627,12 +716,21 @@ impl Ui {
                 3 => "Display brightness, keyboard lighting and TrackPoint controls.",
                 4 => "Check and prepare supported BIOS updates through fwupd.",
                 6 => "Make ThinkHub feel like yours.",
+                7 => "Share a bug report, feature idea or feedback by email.",
                 _ => "Save preferences and inspect detected capabilities.",
             },
             "subtitle",
         ));
         if self.page.get() == 6 {
             self.customize();
+            return;
+        }
+        if self.page.get() == 7 {
+            self.content.append(&feedback::page(
+                &self.window,
+                self.feedback.clone(),
+                self.data.borrow().clone(),
+            ));
             return;
         }
         if !self.loaded.get() {
@@ -1571,7 +1669,7 @@ impl Ui {
         {
             self.note(&card, &text(s));
         }
-        self.note(&card,"This is an early native prototype. Other ThinkPad models and distro packages still need testing. Nothing has been published to GitHub.");
+        self.note(&card,"This is an early public preview. Feature support varies by model, kernel and firmware. Use Feedback to report your experience.");
     }
 }
 
