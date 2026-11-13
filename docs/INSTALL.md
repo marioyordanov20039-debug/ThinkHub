@@ -55,6 +55,24 @@ sudo pacman -U ./thinkhub-0.5.1-1-x86_64.pkg.tar.zst
 
 The preview is not in the AUR or official distro repositories. Do not run `yay -S thinkhub` expecting this release. Packages are currently unsigned; SHA256SUMS detects a damaged/mismatched download, but is not an independent publisher signature. Only install assets from this repository's release page. **Stop if checksum verification fails.**
 
+### Solus
+
+There is no prebuilt Solus package in this preview. Build an `.eopkg` from the tagged source with Solus' own
+`solbuild` in a clean chroot, using the recipe in [`packaging/solus/package.yml`](../packaging/solus/package.yml):
+
+```sh
+sudo eopkg install -y solbuild ypkg
+sudo solbuild init            # once, if you have never built a Solus package
+git clone --branch v0.5.1-preview.1 --depth 1 https://github.com/marioyordanov20039-debug/ThinkHub.git
+cd ThinkHub/packaging/solus
+sudo solbuild build package.yml
+sudo eopkg install ./thinkhub-0.5.1-1-1-x86_64.eopkg
+```
+
+The recipe downloads the tagged source, fetches the locked Rust crates during `setup`, runs the test suites in
+`check` and installs the same files as the other native packages. The build needs network access for crates.io.
+Remove it with `sudo eopkg remove thinkhub`.
+
 ## 2. Launch and optional integrations
 
 Search for **ThinkHub** in your desktop's application menu, or run:
@@ -92,6 +110,8 @@ sudo apt remove thinkhub
 sudo dnf remove thinkhub
 # Arch / CachyOS
 sudo pacman -R thinkhub
+# Solus
+sudo eopkg remove thinkhub
 ```
 
 Only use the command for your distro. Package removal does not delete user preferences in `~/.config/thinkhub` and `~/.config/thinkpad-dashboard`. It does not remove unrelated power/firmware services or undo hardware settings already applied.
@@ -122,6 +142,10 @@ sudo dnf install gcc git curl ca-certificates pkgconf-pkg-config gtk4-devel pyth
 
 # Arch / CachyOS
 sudo pacman -Syu --needed base-devel git curl ca-certificates pkgconf gtk4 python
+
+# Solus
+sudo eopkg install -c system.devel
+sudo eopkg install git curl rust libgtk-4-devel python3
 ```
 
 Run only your distro's block. Install Rust through your distro if it provides Rust 1.85+, or follow [the official Rust installer](https://www.rust-lang.org/tools/install). Build as your normal user, never with sudo.
