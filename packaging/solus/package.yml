@@ -1,0 +1,56 @@
+# ypkg recipe (Solus 4.9+) for ThinkHub 0.5.1-preview.1, built from the tagged source archive.
+# Build: sudo solbuild build package.yml   Install: sudo eopkg install ./thinkhub-*.eopkg
+name       : thinkhub
+version    : 0.5.1
+release    : 1
+source     :
+    - https://github.com/marioyordanov20039-debug/ThinkHub/archive/refs/tags/v0.5.1-preview.1.tar.gz: 042b91ccf8b404b7c48bf951a33f9e73d4a71ac0bcd2c373a681fbeacd70e523
+homepage   : https://github.com/marioyordanov20039-debug/ThinkHub
+license    : MIT
+component  : desktop.gtk
+# Crates are fetched from crates.io during setup; the chroot has no network by default.
+networking : true
+summary    : Native GTK4 dashboard for ThinkPad laptops on Linux
+description: |
+    ThinkHub shows battery health, temperatures, fan speed, hardware information
+    and supported ThinkPad controls. It discovers the interfaces the laptop exposes
+    and explains unavailable features.
+builddeps  :
+    - rust
+    - pkgconfig(gtk4)
+    - pkgconfig(glib-2.0)
+    - desktop-file-utils
+rundeps    :
+    - libgtk-4
+    - polkit
+setup      : |
+    cargo fetch --locked
+    cargo fetch --manifest-path gui/Cargo.toml --locked
+build      : |
+    cargo build --release --locked
+    THINKHUB_CLI_PATH=/usr/bin/thinkpad-dashboard \
+        cargo build --manifest-path gui/Cargo.toml --release --locked
+check      : |
+    cargo test --release --locked
+    cargo test --manifest-path gui/Cargo.toml --release --locked
+install    : |
+    install -Dm00755 target/release/thinkpad-dashboard $installdir/usr/bin/thinkpad-dashboard
+    install -Dm00755 gui/target/release/thinkhub $installdir/usr/bin/thinkhub
+    install -Dm00755 target/release/thinkpad-dashboard-helper $installdir/usr/lib/thinkpad-dashboard/thinkpad-dashboard-helper
+    install -Dm00644 data/io.github.thinkpaddashboard.control.policy $installdir/usr/share/polkit-1/actions/io.github.thinkpaddashboard.control.policy
+    for size in 16x16 24x24 32x32 48x48 128x128 256x256 512x512; do
+        install -Dm00644 gui/assets/icons/$size/io.github.thinkhub.ThinkHub.png $installdir/usr/share/icons/hicolor/$size/apps/io.github.thinkhub.ThinkHub.png
+    done
+    install -Dm00644 gui/assets/io.github.thinkhub.ThinkHub.svg $installdir/usr/share/icons/hicolor/scalable/apps/io.github.thinkhub.ThinkHub.svg
+    install -d $installdir/usr/share/applications
+    printf '%s\n' '[Desktop Entry]' 'Type=Application' 'Name=ThinkHub' \
+        'Comment=ThinkPad hardware, battery health and controls' 'Exec=thinkhub' \
+        'Icon=io.github.thinkhub.ThinkHub' 'Terminal=false' \
+        'Categories=Settings;HardwareSettings;' \
+        'Keywords=ThinkPad;Lenovo;battery;power;TrackPoint;' 'StartupNotify=true' \
+        > $installdir/usr/share/applications/io.github.thinkhub.ThinkHub.desktop
+    install -Dm00644 LICENSE $installdir/usr/share/licenses/thinkhub/LICENSE
+    install -Dm00644 THIRD_PARTY_NOTICES.txt $installdir/usr/share/licenses/thinkhub/THIRD_PARTY_NOTICES.txt
+    for doc in README.md docs/INSTALL.md docs/BIOS_UPDATES.md docs/COMPATIBILITY.md docs/FEEDBACK.md; do
+        install -Dm00644 $doc $installdir/usr/share/doc/thinkhub/$(basename $doc)
+    done

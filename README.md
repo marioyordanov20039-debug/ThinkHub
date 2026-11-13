@@ -22,6 +22,7 @@ Get a native package from **[Releases](https://github.com/marioyordanov20039-deb
 | Debian 12+; compatible Debian-based systems | `thinkhub_0.5.1-1_debian12_amd64.deb` | `sudo apt install ./thinkhub_0.5.1-1_debian12_amd64.deb` |
 | Fedora 43+; compatible Fedora-based systems | `thinkhub-0.5.1-1.fedora43.x86_64.rpm` | `sudo dnf install ./thinkhub-0.5.1-1.fedora43.x86_64.rpm` |
 | Up-to-date Arch Linux, CachyOS, EndeavourOS | `thinkhub-0.5.1-1-x86_64.pkg.tar.zst` | `sudo pacman -U ./thinkhub-0.5.1-1-x86_64.pkg.tar.zst` |
+| Solus 4.9+ | build `thinkhub-0.5.1-1-1-x86_64.eopkg` with `solbuild` ([steps](docs/INSTALL.md#solus)) | `sudo eopkg install ./thinkhub-0.5.1-1-1-x86_64.eopkg` |
 
 These packages are for **64-bit Intel/AMD (`x86_64` / `amd64`)**. Fedora derivatives and Arch derivatives with delayed repositories may need a source build. A package's build baseline is not evidence of physical hardware testing on every derivative. ARM/32-bit binaries and official distro repositories are not available in this preview.
 
